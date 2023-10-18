@@ -18,6 +18,19 @@ type IssueForm = z.infer<typeof createIssueSchema>;
 const NewIssuePage = () => {
   const router = useRouter();
 
+  const onSubmit = async (data: object) => {
+    console.log(data);
+    try {
+      setLoading(true);
+      await axios.post("/api/issues", data);
+
+      router.push("/issues");
+    } catch (error) {
+      setLoading(false);
+      setError("An unexpected error occured");
+    }
+  };
+
   const {
     register,
     control,
@@ -39,20 +52,7 @@ const NewIssuePage = () => {
         </Callout.Root>
       )}
       <title>New Issue</title>
-      <form
-        className="space-y-3 "
-        onSubmit={handleSubmit(async (data) => {
-          try {
-            setLoading(true);
-            await axios.post("/api/issues", data);
-
-            router.push("/issues");
-          } catch (error) {
-            setLoading(false);
-            setError("An unexpected error occured");
-          }
-        })}
-      >
+      <form className="space-y-3 " onSubmit={onSubmit}>
         <TextField.Root>
           <TextField.Input placeholder="Title" {...register("title")} />
         </TextField.Root>
